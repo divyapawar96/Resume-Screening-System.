@@ -1,10 +1,10 @@
 # Resume Screening & Skill Matching System
-## 📌 Project Description
+## 🖳 Project Description
 
 This project is an AI-based Resume Screening and Skill Matching System that automatically analyzes resumes and matches candidates with job descriptions using Natural Language Processing (NLP) and semantic similarity techniques.
 
 The system helps recruiters reduce manual effort by ranking candidates based on skill relevance, experience, and job requirements.
-## ❓ Problem Statement
+## ⚠️ Problem Statement
 
 Recruiters often receive hundreds of resumes for a single job role. Manual resume screening is time-consuming, biased, and inefficient.
 
@@ -12,13 +12,13 @@ This project aims to automate resume screening by intelligently matching resumes
 ## 💡 Solution Overview
 
 The system extracts important information from resumes and job descriptions such as skills, experience, and education. It then uses semantic embeddings to calculate similarity scores and ranks candidates based on their suitability for the job role.
-## 🏗 System Architecture (MVBS)
+## 📐 System Architecture (MVBS)
 
 - **Model:** NLP models and Sentence Transformers for skill matching
 - **View:** Web-based user interface using Streamlit
 - **Business Logic:** Resume parsing, matching, scoring, and ranking logic
 - **Storage:** Structured data storage for resumes and job descriptions
-## 🚀 Features
+## ⚜️ Features
 
 - Resume parsing (PDF & DOCX)
 - Job description parsing
@@ -45,7 +45,7 @@ The system extracts important information from resumes and job descriptions such
    git clone https://github.com/divyapawar96/ResumeScreeningSystem.git
 pip install -r requirements.txt
 streamlit run web_app/app.py
-## 🌟 Unique Enhancements
+## 🏅 Unique Enhancements
 
 - Skill gap identification with recommendations
 - Resume summarization for quick HR review
