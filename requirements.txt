@@ -1,0 +1,11 @@
+spacy
+sentence-transformers
+pdfminer.six
+docx2txt
+streamlit
+plotly
+matplotlib
+seaborn
+pandas
+numpy
+fpdf
