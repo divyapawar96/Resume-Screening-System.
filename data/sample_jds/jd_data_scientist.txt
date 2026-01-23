@@ -1,0 +1,15 @@
+Job Title: Data Scientist (NLP)
+
+We are looking for a Data Scientist with strong NLP and ML fundamentals.
+
+Requirements:
+- 2+ years of experience in Machine Learning / Data Science
+- Strong Python programming
+- Experience with NLP libraries (spaCy / NLTK)
+- Sentence Transformers or similar embedding models
+- Data analysis with pandas and numpy
+- SQL for data extraction
+- Familiarity with Git and Docker is a plus
+
+Education:
+- B.Tech / B.E / BSc in Computer Science, Engineering, or related field

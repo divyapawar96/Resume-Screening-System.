@@ -1,0 +1,21 @@
+Divya Pawar
+Email: divya.pawar96@gmail.com
+Phone: +91 98765 43210
+Location: Pune, India
+
+Summary:
+NLP-focused data scientist with experience building resume screening and skill matching systems.
+
+Skills:
+Python, NLP, spaCy, NLTK, Sentence-Transformers, pandas, numpy, SQL, Git, Docker, FastAPI, Streamlit
+
+Experience:
+Data Scientist @ TalentMatch AI | Jun 2022 - Present
+- Built semantic matching pipelines using embeddings and cosine similarity.
+- Developed FastAPI services for resume parsing and ranking.
+
+Projects:
+- Resume Screening System (NLP + Sentence Transformers)
+
+Education:
+B.Tech - Computer Engineering, 2021

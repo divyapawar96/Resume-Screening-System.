@@ -1,0 +1,15 @@
+Aisha Khan
+Email: aisha.khan@mail.com
+
+Profile:
+Entry-level analyst with interest in machine learning and NLP.
+
+Skills:
+Python, pandas, numpy, data analysis, machine learning, Git
+
+Internship:
+Data Analyst Intern @ DataWiz | Jun 2023 - Aug 2023
+- Prepared datasets and dashboards.
+
+Education:
+BSc - Statistics, 2023

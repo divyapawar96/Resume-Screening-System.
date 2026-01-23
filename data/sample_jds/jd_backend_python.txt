@@ -1,0 +1,17 @@
+Backend Engineer (Python/FastAPI)
+
+We need a Backend Engineer to build APIs and services.
+
+Required Skills:
+- Python
+- FastAPI or Flask
+- REST API design
+- SQL
+- Docker
+- Git
+
+Experience:
+- 3-5 years of backend development
+
+Education:
+- B.Tech / B.E / BSc preferred

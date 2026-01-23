@@ -1,0 +1,17 @@
+Rahul Sharma
+Email: rahul.sharma@gmail.com
+Phone: +91 99887 77665
+
+Summary:
+Backend engineer specializing in Python APIs and data services.
+
+Technical Skills:
+Python, FastAPI, Flask, REST API, SQL, Docker, Git, Linux, AWS
+
+Work Experience:
+Backend Engineer @ CloudServe | Jan 2021 - Present
+- Built REST APIs with FastAPI and Flask.
+- Improved SQL query performance and data pipelines.
+
+Education:
+B.E - Information Technology, 2020
