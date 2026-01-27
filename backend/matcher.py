@@ -145,6 +145,21 @@ def _education_match_boost(candidate_education: Sequence[Any], required_educatio
     return 1.0 if (has_req and has_cand) else 0.0
 
 
+# Global model cache
+_MODEL_CACHE = {}
+
+def get_model(model_name: str = "sentence-transformers/all-MiniLM-L6-v2"):
+    if model_name not in _MODEL_CACHE:
+        logger.info(f"Loading model: {model_name}...")
+        try:
+            from sentence_transformers import SentenceTransformer
+            _MODEL_CACHE[model_name] = SentenceTransformer(model_name)
+            logger.info("Model loaded successfully.")
+        except Exception as e:
+            logger.error(f"Failed to load model {model_name}: {e}")
+            return None
+    return _MODEL_CACHE.get(model_name)
+
 def compute_match_score(
     candidate_skills: Sequence[str],
     required_skills: Sequence[str],
@@ -161,15 +176,12 @@ def compute_match_score(
     if not cand_text or not req_text:
         return 0.0, 0.0
 
-    # Lazy import to keep modules lightweight unless needed.
-    # If SentenceTransformers isn't installed yet, gracefully fall back to Jaccard.
-    try:
-        from sentence_transformers import SentenceTransformer  # type: ignore
-    except Exception:
+    model = get_model(model_name)
+    
+    if not model:
+        # Fallback to Jaccard if model fails to load
         sim = _jaccard_similarity(candidate_skills, required_skills)
         return round(sim, 4), round(sim * 100.0, 2)
-
-    model = SentenceTransformer(model_name)
 
     emb = model.encode([cand_text, req_text], normalize_embeddings=False)
     sim = _cosine_sim(np.array(emb[0]), np.array(emb[1]))
@@ -193,7 +205,50 @@ def rank_candidates(
     results: List[CandidateMatch] = []
     req_years = _parse_required_years(required_experience)
 
-    for r in parsed_resumes:
+    # 1. Prepare data for batch processing
+    req_text = _join_skills(required_skills)
+    cand_texts = [_join_skills(getattr(r, "skills", []) or []) for r in parsed_resumes]
+    
+    # 2. Batch encode (vectorize) ONLY if we have text to match
+    match_sims = [0.0] * len(parsed_resumes)
+    match_scores = [0.0] * len(parsed_resumes)
+
+    model = get_model(model_name)
+    if model and req_text and any(cand_texts):
+        try:
+            # Optimize: Batch encode all candidates + requirement in one go (or 1 + N)
+            # encoding [req_text] + cand_texts
+            all_texts = [req_text] + cand_texts
+            embeddings = model.encode(all_texts, normalize_embeddings=True)
+            
+            # embeddings[0] is req, embeddings[1:] are candidates
+            req_emb = embeddings[0]
+            cand_embs = embeddings[1:]
+            
+            # vectorized cosine similarity
+            # (N, D) dot (D,) -> (N,)
+            cosine_scores = np.dot(cand_embs, req_emb)
+            
+            # Clip and scale
+            for i, score in enumerate(cosine_scores):
+                sim = max(0.0, min(1.0, float(score)))
+                match_sims[i] = sim
+                match_scores[i] = round(sim * 100.0, 2)
+
+        except Exception as e:
+            logger.exception(f"Batch embedding failed: {e}")
+            # Fallback to manual/individual score if batch fails (unlikely)
+    else:
+        # Fallback for Jaccard or no model
+        for i, ct in enumerate(cand_texts):
+             cand_skills = getattr(parsed_resumes[i], "skills", []) or []
+             sim = _jaccard_similarity(cand_skills, required_skills)
+             match_sims[i] = round(sim, 4)
+             match_scores[i] = round(sim * 100.0, 2)
+
+
+    # 3. Assemble results with other factors
+    for i, r in enumerate(parsed_resumes):
         name = (getattr(r, "name", None) or "Unknown").strip()
         resume_path = getattr(r, "file_path", "")
         skills = getattr(r, "skills", []) or []
@@ -201,15 +256,9 @@ def rank_candidates(
         cand_edu = getattr(r, "education", []) or []
         cand_exp = getattr(r, "experience", []) or []
 
-        try:
-            sim, match_score = compute_match_score(
-                candidate_skills=skills,
-                required_skills=required_skills,
-                model_name=model_name,
-            )
-        except Exception as e:
-            logger.exception(f"Embedding match failed for {resume_path}: {e}")
-            sim, match_score = 0.0, 0.0
+        # Retrieve pre-calculated scores
+        sim = match_sims[i]
+        match_score = match_scores[i]
 
         # Experience boost: if candidate meets/exceeds required min years.
         cand_years = _estimate_candidate_years(cand_exp)
@@ -263,6 +312,7 @@ def matches_to_jsonable(matches: Sequence[CandidateMatch]) -> List[Dict[str, Any
                 "name": m.name,
                 "resume_path": m.resume_path,
                 "match_score": m.match_score,
+                "score": m.match_score,  # Flat score for frontend
                 "semantic_similarity": m.semantic_similarity,
                 "resume_quality_score": m.resume_quality_score,
                 "education_boost": m.education_boost,
@@ -272,6 +322,9 @@ def matches_to_jsonable(matches: Sequence[CandidateMatch]) -> List[Dict[str, Any
                     "missing_skills": m.skill_gap.missing_skills,
                     "match_percentage": m.skill_gap.match_percentage,
                 },
+                "matched_skills": m.skill_gap.matched_skills,  # Flat skills for frontend
+                "missing_skills": m.skill_gap.missing_skills,  # Flat missing skills for frontend
+                "match_status": "High" if m.match_score >= 70 else "Medium" if m.match_score >= 40 else "Low"
             }
         )
     return out

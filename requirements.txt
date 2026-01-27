@@ -1,24 +1,16 @@
-<<<<<<< HEAD
 pandas
 numpy
 sentence-transformers
 PyPDF2
 python-docx
-spacy
 fastapi
 uvicorn
 pydantic
 python-multipart
-=======
-spacy
-sentence-transformers
 pdfminer.six
 docx2txt
 streamlit
 plotly
 matplotlib
 seaborn
-pandas
-numpy
 fpdf
->>>>>>> 31735d9639cdf4a19b6937dc58cd3ab75a2cbb92

@@ -14,6 +14,7 @@ from pathlib import Path
 from typing import List, Optional
 
 from fastapi import FastAPI, File, UploadFile
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
 from backend.job_parser import parse_job_description
@@ -23,7 +24,22 @@ from backend.utils import ensure_dir, setup_logger, write_text
 
 
 logger = setup_logger()
+
 app = FastAPI(title="Resume Screening & Skill Matching API", version="1.0.0")
+
+@app.on_event("startup")
+async def startup_event():
+    from backend.matcher import get_model
+    logger.info("Preloading model on startup...")
+    get_model()
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # For dev simplicity; lock down in prod
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 
 class RankRequest(BaseModel):

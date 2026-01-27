@@ -332,15 +332,32 @@ def parse_resumes_in_dir(
     resumes_dir: Union[str, Path],
     skill_vocab: Optional[Sequence[str]] = None,
     extensions: Optional[Sequence[str]] = (".pdf", ".docx", ".txt"),
+    max_workers: int = 4,
 ) -> List[ParsedResume]:
     from backend.utils import list_files
+    from concurrent.futures import ThreadPoolExecutor
 
+    files = list_files(resumes_dir, extensions=extensions)
+    if not files:
+        return []
+
+    logger.info(f"Parsing {len(files)} resumes in parallel (workers={max_workers})...")
+    
     parsed: List[ParsedResume] = []
-    for fp in list_files(resumes_dir, extensions=extensions):
-        try:
-            parsed.append(parse_resume(fp, skill_vocab=skill_vocab))
-        except Exception as e:
-            logger.exception(f"Failed to parse resume {fp.name}: {e}")
+    
+    with ThreadPoolExecutor(max_workers=max_workers) as executor:
+        # Map each file parsing to a thread
+        future_to_file = {executor.submit(parse_resume, fp, skill_vocab): fp for fp in files}
+        
+        from concurrent.futures import as_completed
+        for future in as_completed(future_to_file):
+            fp = future_to_file[future]
+            try:
+                data = future.result()
+                parsed.append(data)
+            except Exception as e:
+                logger.exception(f"Failed to parse resume {fp.name}: {e}")
+                
     return parsed
 
 
