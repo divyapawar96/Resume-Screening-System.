@@ -13,17 +13,17 @@ A sophisticated end-to-end platform designed to automate the recruitment process
 ## 🏗️ Project Structure
 
 ```text
-├── backend/            # FastAPI Python Backend
-│   ├── api.py          # REST API Endpoints
-│   ├── matcher.py      # AI Core & Scoring Logic
-│   ├── resume_parser.py # Document Extraction logic
-│   └── ...            # Utils, Job Parser, Skill Gap
-├── frontend/           # React + Vite Frontend
-│   ├── src/            # UI Components & App Pages
-│   └── ...            # Vite & Build configuration
-├── data/               # Sample Datasets
-│   ├── sample_resumes/ # Test Resume files
-│   └── sample_jds/     # Test Job Descriptions
+├── backend/            
+│   ├── api.py         
+│   ├── matcher.py      
+│   ├── resume_parser.py 
+│   └── ...            
+├── frontend/           
+│   ├── src/            
+│   └── ...            
+├── data/               
+│   ├── sample_resumes/ 
+│   └── sample_jds/    
 ├── outputs/            # System-generated artifacts
 │   └── uploads/        # Temporary storage for uploaded files
 └── requirements.txt    # Python dependencies
